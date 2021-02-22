@@ -1,8 +1,16 @@
 //express setup
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4500;
 const path = require("path");
+
+//database
+const {
+    db,
+    seed,
+    model: { Song, Artist, Album },
+} = require("./db");
+seed();
 
 //views
 const homepage = path.join(__dirname, "..", "public/index.html");
@@ -25,6 +33,82 @@ app.get("/", async (req, res) => {
         await res.sendFile(homepage);
     } catch (err) {
         console.log(err);
+    }
+});
+
+app.post("/:songid", async (req, res) => {
+    try {
+        await Song.deleteByPk(req.params.songid);
+        await res.redirect("/");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.get("/api/artists", async (req, res, next) => {
+    try {
+        res.send(await Artist.findAll());
+    } catch (err) {
+        console.log(err);
+    }
+});
+app.get("/api/albums", async (req, res, next) => {
+    try {
+        res.send(
+            await Album.findAll({
+                include: {
+                    model: Artist,
+                },
+            }),
+        );
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.get("/api/songs", async (req, res, next) => {
+    try {
+        res.send(
+            await Song.findAll({
+                include: {
+                    model: Album,
+                    include: {
+                        model: Artist,
+                    },
+                },
+            }),
+        );
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.get("/api/just_songs", async (req, res, next) => {
+    try {
+        res.send(
+            await Song.findAll({
+                include: {
+                    model: Album,
+                },
+                order: [["songNum", "ASC"]],
+            }),
+        );
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.get("/api/artists/:artistId/albums", async (req, res, next) => {
+    try {
+        console.log(req.params.artistId);
+        res.send(
+            await Album.findAll({
+                where: { artistId: req.params.artistId },
+            }),
+        );
+    } catch (ex) {
+        console.log(req.params);
+        next(ex);
     }
 });
 

@@ -17,6 +17,10 @@ Song.init(
             allowNull: false,
             validate: { notEmpty: true },
         },
+        songNum: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,
@@ -24,6 +28,18 @@ Song.init(
         modelName: "songs",
     },
 );
+
+Song.deleteByPk = async (id) => {
+    try {
+        await Song.destroy({
+            where: {
+                id: id,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
 
 Album.init(
     {
@@ -72,13 +88,10 @@ Artist.init(
     },
 );
 
-Song.belongsTo(Artist);
-Artist.belongsToMany(Song);
-
 Song.belongsTo(Album);
-Album.belongsToMany(Song);
+Album.hasMany(Song);
 
-Artist.belongsToMany(Album, { through: "AlbumArtist" });
-Album.belongsToMany(Album, { through: "AlbumArtist" });
+Album.belongsTo(Artist);
+Artist.hasMany(Album);
 
 module.exports = { model: { Song, Artist, Album } };
