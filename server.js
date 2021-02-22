@@ -13,7 +13,7 @@ const {
 seed();
 
 //views
-const homepage = path.join(__dirname, "..", "public/index.html");
+const homepage = path.join(__dirname, "public/index.html");
 
 //logger
 const morgan = require("morgan");
@@ -28,9 +28,12 @@ app.use("/dist", express.static(path.join(__dirname, "dist")));
 app.use(express.static("public"));
 
 //routes
+const apiRouter = require("./routes/api");
+const addRouter = require("./routes/add");
+
 app.get("/", async (req, res) => {
     try {
-        await res.sendFile(homepage);
+        await res.status(200).sendFile(homepage);
     } catch (err) {
         console.log(err);
     }
@@ -38,79 +41,49 @@ app.get("/", async (req, res) => {
 
 app.post("/:songid", async (req, res) => {
     try {
+        //song to be deleted
+        const deletedSong = await Song.findOne({
+            where: { id: req.params.songid },
+        });
+
+        //the tracks on the album of the deleted song
+        const deletedSongTracklist = await Song.findAll({
+            where: { albumId: deletedSong.albumId },
+        });
+
+        //and the album itself
+        const deletedSongAlbum = await Album.findOne({
+            where: { id: deletedSong.albumId },
+        });
+
+        //delete, and if last song on album, delete album too
         await Song.deleteByPk(req.params.songid);
-        await res.redirect("/");
+        if (deletedSongTracklist.length === 1) {
+            deletedSongAlbum.destroy();
+        }
+
+        //and the artist...
+        const albumsFromArtist = await Album.findOne({
+            where: { artistId: deletedSongAlbum.artistId },
+        });
+
+        //if artist has no albums, delete
+        if (!albumsFromArtist) {
+            const artist = await Artist.findOne({
+                where: { id: deletedSongAlbum.artistId },
+            });
+            artist.destroy();
+        }
+
+        await res.status(204).redirect("/");
     } catch (err) {
         console.log(err);
     }
 });
 
-app.get("/api/artists", async (req, res, next) => {
-    try {
-        res.send(await Artist.findAll());
-    } catch (err) {
-        console.log(err);
-    }
-});
-app.get("/api/albums", async (req, res, next) => {
-    try {
-        res.send(
-            await Album.findAll({
-                include: {
-                    model: Artist,
-                },
-            }),
-        );
-    } catch (err) {
-        next(err);
-    }
-});
+app.use("/add", addRouter);
 
-app.get("/api/songs", async (req, res, next) => {
-    try {
-        res.send(
-            await Song.findAll({
-                include: {
-                    model: Album,
-                    include: {
-                        model: Artist,
-                    },
-                },
-            }),
-        );
-    } catch (err) {
-        next(err);
-    }
-});
-
-app.get("/api/just_songs", async (req, res, next) => {
-    try {
-        res.send(
-            await Song.findAll({
-                include: {
-                    model: Album,
-                },
-                order: [["songNum", "ASC"]],
-            }),
-        );
-    } catch (err) {
-        next(err);
-    }
-});
-
-app.get("/api/artists/:artistId/albums", async (req, res, next) => {
-    try {
-        console.log(req.params.artistId);
-        res.send(
-            await Album.findAll({
-                where: { artistId: req.params.artistId },
-            }),
-        );
-    } catch (ex) {
-        console.log(req.params);
-        next(ex);
-    }
-});
+app.use("/api", apiRouter);
 
 app.use("", async (err, req, res, next) => {
     if (err) {

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dealers Choice Sequelize</title>
+        <script src="dist/main.js" defer></script>
+        <link rel="stylesheet" href="./assets/styles.css" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <h1>Metro Boomin Production Discography</h1>
+        <div id="addData">
+            <form action="/">
+                <button class="main-btn">Back</button>
+            </form>
+        </div>
+        <div id="data-container">
+            <form action="/add" method="POST">
+                <div id="artist-container" class="container">
+                    <h2>Primary Artist</h2>
+                    <input type="text" name="artist" />
+                </div>
+                <div id="album-container" class="container">
+                    <h2>Album</h2>
+                    <input
+                        class="album-input"
+                        type="text"
+                        name="albumName"
+                        placeholder="name"
+                    />
+                    <input
+                        class="album-input"
+                        type="text"
+                        name="albumYear"
+                        placeholder="year"
+                    />
+                </div>
+                <div id="song-container" class="container">
+                    <h2>Album Tracks</h2>
+                    <div id="number-of-songs-controller">
+                        <button
+                            type="button"
+                            class="minor-btn"
+                            id="remove-track"
+                        >
+                            Remove
+                        </button>
+                        <button type="button" class="minor-btn" id="add-track">
+                            Add
+                        </button>
+                    </div>
+                    <div id="song-inputs">
+                        <input
+                            class="song-input"
+                            type="text"
+                            placeholder="track 1"
+                            name="track_1"
+                        />
+                        <input
+                            class="song-input"
+                            type="text"
+                            placeholder="track 2"
+                            name="track_2"
+                        />
+                        <input
+                            class="song-input"
+                            type="text"
+                            placeholder="track 3"
+                            name="track_3"
+                        />
+                        <input
+                            class="song-input"
+                            type="text"
+                            placeholder="track 4"
+                            name="track_4"
+                        />
+                        <input
+                            class="song-input"
+                            type="text"
+                            placeholder="track 5"
+                            name="track_5"
+                        />
+                    </div>
+                    <button class="minor-btn">Submit to Databse</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

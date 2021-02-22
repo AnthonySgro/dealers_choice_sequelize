@@ -1,8 +1,19 @@
 import axios from "axios";
 
-const artistList = document.querySelector("#artist-list");
-const albumList = document.querySelector("#album-list");
-const songList = document.querySelector("#song-list");
+let artistList;
+let albumList;
+let songList;
+let addBtn;
+let removeBtn;
+
+if (document.querySelector("#artist-list")) {
+    artistList = document.querySelector("#artist-list");
+    albumList = document.querySelector("#album-list");
+    songList = document.querySelector("#song-list");
+} else {
+    addBtn = document.querySelector("#add-track");
+    removeBtn = document.querySelector("#remove-track");
+}
 
 const renderArtists = async () => {
     const artists = (await axios("/api/artists")).data;
@@ -66,9 +77,11 @@ const renderSongs = async (albumSongs) => {
     songList.innerHTML = html;
 };
 
-renderArtists();
-renderAlbums();
-renderSongs();
+if (artistList) {
+    renderArtists();
+    renderAlbums();
+    renderSongs();
+}
 
 window.addEventListener("hashchange", async () => {
     const artistId = await window.location.hash.slice(1);
@@ -92,5 +105,30 @@ window.addEventListener("click", async (ev) => {
             }
         });
         renderSongs(clickedAlbumSongs);
+    } else if (target === removeBtn) {
+        const songInputs = [...document.querySelectorAll(".song-input")];
+        if (songInputs.length === 0) {
+            return;
+        } else {
+            const lastChild = songInputs[songInputs.length - 1];
+            const songInputContainer = songInputs[0].parentNode;
+            songInputContainer.removeChild(lastChild);
+        }
+    } else if (target === addBtn) {
+        const songInputContainer = document.querySelector("#song-inputs");
+        const newInput = document.createElement("INPUT");
+        newInput.className = "song-input";
+        newInput.type = "text";
+        newInput.placeholder = `track ${
+            songInputContainer.children.length + 1
+        }`;
+        newInput.name = `track_${songInputContainer.children.length + 1}`;
+        songInputContainer.appendChild(newInput);
+    }
+});
+
+window.addEventListener("mouseover", (ev) => {
+    if (ev.target.tagName === "A") {
+        console.log("hi");
     }
 });
