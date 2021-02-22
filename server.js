@@ -20,8 +20,8 @@ const morgan = require("morgan");
 app.use(morgan("dev"));
 
 //parsing requests
-app.use(require("body-parser").json());
-app.use(express.urlencoded({ extended: false }));
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //client side static
 app.use("/dist", express.static(path.join(__dirname, "dist")));
