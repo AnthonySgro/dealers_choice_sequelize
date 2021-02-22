@@ -29,13 +29,37 @@ Song.init(
     },
 );
 
+//deletes a song, /album if last song /artist if last album
 Song.deleteByPk = async (id) => {
     try {
+        const thisSong = await Song.findOne({
+            where: {
+                id: id,
+            },
+        });
+
+        const thisAlbum = await Album.findOne({
+            where: {
+                id: thisSong.albumId,
+            },
+        });
+
         await Song.destroy({
             where: {
                 id: id,
             },
         });
+
+        const anotherSong = await Song.findOne({
+            where: {
+                albumId: thisAlbum.id,
+            },
+        });
+
+        if (!anotherSong) {
+            await Album.deleteByPk(thisAlbum.id);
+        }
+        console.log("-----------6------------");
     } catch (err) {
         console.log(err);
     }
@@ -98,13 +122,36 @@ Album.findByInfo = async (name, year, artistEntry) => {
     }
 };
 
+//deleted an album, and the artist if last album
 Album.deleteByPk = async (id) => {
     try {
+        const thisAlbum = await Album.findOne({
+            where: {
+                id: id,
+            },
+        });
+
+        const thisArtist = await Artist.findOne({
+            where: {
+                id: thisAlbum.artistId,
+            },
+        });
+
         await Album.destroy({
             where: {
                 id: id,
             },
         });
+
+        const anotherAlbum = await Album.findOne({
+            where: {
+                artistId: thisArtist.id,
+            },
+        });
+
+        if (!anotherAlbum) {
+            await Artist.deleteByPk(thisArtist.id);
+        }
     } catch (err) {
         console.log(err);
     }
@@ -133,7 +180,7 @@ Album.addDatabaseEntry = async (entry) => {
                 artistId: newArtist.id,
             });
         }
-
+        console.log("hiohsafjkdshlfkjahsdjkf---------adsfasdfad-fa-ds-fa-");
         //do tracks in an array
         const newTracks = await Promise.all(
             entry.trackNames.map(async (name, i) => {
@@ -183,6 +230,18 @@ Artist.findByName = async (name) => {
             },
         });
         return artist;
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+Artist.deleteByPk = async (id) => {
+    try {
+        await Artist.destroy({
+            where: {
+                id: id,
+            },
+        });
     } catch (err) {
         console.log(err);
     }

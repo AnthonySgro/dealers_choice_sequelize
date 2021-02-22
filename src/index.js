@@ -63,11 +63,11 @@ const renderSongs = async (albumSongs) => {
     const html = `${albumSongs
         .map(
             (song) => `
-
+            
             <li>
                 <form method="POST" action="/${song.id}">
-                    (${song.songNum}) - ${song.name}
-                    <button>X</button>
+                    <p><span>${song.songNum}. &nbsp;</span>${song.name}</p>
+                    <button class="small-btn">x</button>
                 </form>
             </li>
             `,
@@ -93,7 +93,13 @@ window.addEventListener("hashchange", async () => {
 
 window.addEventListener("click", async (ev) => {
     const target = ev.target;
+
     if (target.tagName === "LI" && target.parentNode === albumList) {
+        [...albumList.children].forEach((child) => {
+            child.classList.remove("selected");
+        });
+        target.classList.add("selected");
+
         const albumName = target.innerHTML.trim();
         const URL = `/api/just_songs`;
         const songs = (await axios.get(URL)).data;
@@ -124,11 +130,5 @@ window.addEventListener("click", async (ev) => {
         }`;
         newInput.name = `track_${songInputContainer.children.length + 1}`;
         songInputContainer.appendChild(newInput);
-    }
-});
-
-window.addEventListener("mouseover", (ev) => {
-    if (ev.target.tagName === "A") {
-        console.log("hi");
     }
 });

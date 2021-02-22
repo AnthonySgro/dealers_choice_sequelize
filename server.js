@@ -38,52 +38,20 @@ app.get("/", async (req, res) => {
         console.log(err);
     }
 });
+app.use("/add", addRouter);
+
+app.use("/api", apiRouter);
 
 app.post("/:songid", async (req, res) => {
     try {
-        //song to be deleted
-        const deletedSong = await Song.findOne({
-            where: { id: req.params.songid },
-        });
-
-        //the tracks on the album of the deleted song
-        const deletedSongTracklist = await Song.findAll({
-            where: { albumId: deletedSong.albumId },
-        });
-
-        //and the album itself
-        const deletedSongAlbum = await Album.findOne({
-            where: { id: deletedSong.albumId },
-        });
-
-        //delete, and if last song on album, delete album too
-        await Song.deleteByPk(req.params.songid);
-        if (deletedSongTracklist.length === 1) {
-            deletedSongAlbum.destroy();
-        }
-
-        //and the artist...
-        const albumsFromArtist = await Album.findOne({
-            where: { artistId: deletedSongAlbum.artistId },
-        });
-
-        //if artist has no albums, delete
-        if (!albumsFromArtist) {
-            const artist = await Artist.findOne({
-                where: { id: deletedSongAlbum.artistId },
-            });
-            artist.destroy();
-        }
+        //song to be deleted, deletes album and artist if last song too
+        const deletedSong = await Song.deleteByPk(req.params.songid);
 
         await res.status(204).redirect("/");
     } catch (err) {
         console.log(err);
     }
 });
-
-app.use("/add", addRouter);
-
-app.use("/api", apiRouter);
 
 app.use("", async (err, req, res, next) => {
     if (err) {

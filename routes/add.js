@@ -21,6 +21,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
+        console.log("------------------asDFASDFADS------------");
+
         const artistName = req.body.artist;
         const albumName = req.body.albumName;
         const albumYear = req.body.albumYear;

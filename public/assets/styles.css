@@ -16,7 +16,7 @@ h2 {
 }
 
 .selected {
-    background-color: #81b29a;
+    background-color: #917b56;
 }
 
 .main-btn {
@@ -37,8 +37,19 @@ h2 {
     transition: 0.2s background-color;
 }
 
-.main-btn:hover,
-.minor-btn:hover {
+.small-btn {
+    font-size: xx-small;
+    border: 0px;
+    padding: 0rem 0rem;
+    color: #f4f1de;
+    background-color: #e07a5f;
+    border-radius: 0.3rem;
+    display: flex;
+    justify-content: center;
+    transition: 0.2s background-color;
+}
+
+button:hover {
     background-color: #bf6951;
     cursor: pointer;
 }
@@ -75,28 +86,75 @@ li {
     right: 1rem;
     margin: 0.5rem;
     padding: 0.5rem;
+    width: 10rem;
+}
+
+#song-list > li {
+    cursor: pointer;
+    background-color: #f2cc8f;
+    border-radius: 0.5rem;
+    position: relative;
+    right: 1rem;
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+form {
+    margin: 0rem;
+    padding: 0rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+li > form > button {
+    align-self: center;
+    width: 20%;
+    margin-top: 0.3rem;
+}
+
+li > form > p {
+    margin: 0rem;
+}
+
+span {
+    font-weight: bold;
 }
 
 #album-list > * {
     cursor: pointer;
     background-color: #f2cc8f;
     border-radius: 0.5rem;
+    position: relative;
+    right: 1rem;
+    margin: 0.5rem;
+    padding: 0.5rem;
 }
 
 #artist-list > li {
     background-color: #f2cc8f;
     border-radius: 0.5rem;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-content: center;
+    padding: 0rem;
 }
 
-li:hover {
-    background-color: #f2cc8f;
+#artist-list > li:hover,
+#album-list > li:hover {
+    background-color: #d5b47f;
+}
+#artist-list > li:active,
+#album-list > li:active {
+    background-color: #b89b6c;
 }
 
 a {
     text-decoration: none;
     color: black;
+    padding: 0.5rem;
+    width: 100%;
 }
 
 .selected {
